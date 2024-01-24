@@ -7,6 +7,7 @@ pub mod audit_trail;
 pub mod console;
 pub mod datasets;
 pub mod documents;
+pub mod licenses;
 pub mod logout_form;
 pub mod model_form;
 pub mod models;
@@ -190,6 +191,19 @@ pub mod routes {
 
         pub fn delete_route(team_id: i32, id: i32) -> String {
             format!("/app/team/{}/api_keys/delete/{}", team_id, id)
+        }
+    }
+
+    pub mod licenses {
+        pub static INDEX: &str = "/app/team/:team_id/licenses";
+        pub static SET_LICENSE: &str = "/app/team/:team_id/licenses/set_license/:tier";
+
+        pub fn index_route(team_id: i32) -> String {
+            format!("/app/team/{}/licenses", team_id)
+        }
+
+        pub fn set_license_route(team_id: i32, tier: i32) -> String {
+            format!("/app/team/{}/licenses/set_license/{}", team_id, tier)
         }
     }
 

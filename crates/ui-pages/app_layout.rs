@@ -10,6 +10,7 @@ use dioxus::prelude::*;
 pub enum SideBar {
     None,
     ApiKeys,
+    License,
     AuditTrail,
     Console,
     Training,
@@ -89,33 +90,33 @@ pub fn Layout<'a>(cx: Scope<'a, LayoutProps<'a>>) -> Element {
                                     icon: nav_ccsds_data_svg.name,
                                     title: "Team Datasets"
                                 }
-                                NavItem {
-                                    id: SideBar::DocumentPipelines.to_string(),
-                                    selected_item_id: cx.props.selected_item.to_string(),
-                                    href: super::routes::document_pipelines::index_route(cx.props.team_id),
-                                    icon: nav_ccsds_data_svg.name,
-                                    title: "Document Pipelines"
-                                }
+                                // NavItem {
+                                //     id: SideBar::DocumentPipelines.to_string(),
+                                //     selected_item_id: cx.props.selected_item.to_string(),
+                                //     href: super::routes::document_pipelines::index_route(cx.props.team_id),
+                                //     icon: nav_ccsds_data_svg.name,
+                                //     title: "Document Pipelines"
+                                // }
                             ))
                         }
                     ))
                 }
-                if cx.props.rbac.can_use_api_keys() {
-                    cx.render(rsx!(
-                        NavGroup {
-                            heading: "Developers",
-                            content:  cx.render(rsx!(
-                                NavItem {
-                                    id: SideBar::ApiKeys.to_string(),
-                                    selected_item_id: cx.props.selected_item.to_string(),
-                                    href: super::routes::api_keys::index_route(cx.props.team_id),
-                                    icon: nav_api_keys_svg.name,
-                                    title: "LLM API Keys"
-                                }
-                            ))
-                        }
-                    ))
-                }
+                // if cx.props.rbac.can_use_api_keys() {
+                //     cx.render(rsx!(
+                //         NavGroup {
+                //             heading: "Developers",
+                //             content:  cx.render(rsx!(
+                //                 NavItem {
+                //                     id: SideBar::ApiKeys.to_string(),
+                //                     selected_item_id: cx.props.selected_item.to_string(),
+                //                     href: super::routes::api_keys::index_route(cx.props.team_id),
+                //                     icon: nav_api_keys_svg.name,
+                //                     title: "LLM API Keys"
+                //                 }
+                //             ))
+                //         }
+                //     ))
+                // }
                 if cx.props.rbac.can_view_teams() {
                     cx.render(rsx!(
                         NavGroup {
@@ -162,6 +163,20 @@ pub fn Layout<'a>(cx: Scope<'a, LayoutProps<'a>>) -> Element {
                         }
                     ))
                 }
+
+                NavGroup {
+                    heading: "Account",
+                    content:  cx.render(rsx!(
+                        NavItem {
+                            id: SideBar::Profile.to_string(),
+                            selected_item_id: cx.props.selected_item.to_string(),
+                            href: super::routes::licenses::index_route(cx.props.team_id),
+                            icon: nav_teams_svg.name,
+                            title: "Licenses"
+                        }
+                    ))
+                }
+
             )),
             sidebar_header: cx.render(rsx!(
                 turbo-frame {

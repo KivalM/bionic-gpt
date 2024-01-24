@@ -11,6 +11,7 @@ mod email;
 mod errors;
 mod index;
 mod layout;
+mod licensing;
 mod models;
 mod pipelines;
 mod profile;
@@ -55,6 +56,7 @@ async fn main() {
         .merge(pipelines::routes())
         .merge(models::routes())
         .merge(prompts::routes())
+        .merge(licensing::routes())
         .layer(TraceLayer::new_for_http())
         .layer(Extension(config))
         .layer(Extension(pool.clone()))

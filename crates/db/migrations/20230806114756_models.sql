@@ -14,6 +14,7 @@ CREATE TABLE models (
     api_key VARCHAR, 
     billion_parameters INT NOT NULL, 
     context_size INT NOT NULL, 
+    tier INT NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -25,6 +26,12 @@ GRANT USAGE, SELECT ON models_id_seq TO bionic_application;
 -- Give access to the readonly user
 GRANT SELECT ON models TO bionic_readonly;
 GRANT SELECT ON models_id_seq TO bionic_readonly;
+
+-- rls policy for licenses
+
+alter table models enable row level security;
+
+
 
 -- migrate:down
 DROP TABLE models;
