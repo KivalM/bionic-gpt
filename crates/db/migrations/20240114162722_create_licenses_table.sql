@@ -1,37 +1,59 @@
-have -- migrate:up
-create table licenses (
+-- migrate:up
+create table team_licenses (
     id integer primary key not null generated always as identity,
-    user_id integer not null references users(id),
+    team_id integer unique not null references teams(id),
     tier integer not null default 0,
 
-    expires_at TIMESTAMPTZ not null default current_timestamp,
+    expires_at TIMESTAMPTZ not null default current_timestamp + interval '1 month',
     created_at TIMESTAMPTZ not null default current_timestamp,
     updated_at TIMESTAMPTZ not null default current_timestamp
 );
 
--- Helper functions for tenancy isolation 
-CREATE FUNCTION get_tier() RETURNS INTEGER AS 
-$$ 
-    SELECT
-        tier
-    FROM
-        licenses
-    WHERE
-        user_id = current_app_user()
-    LIMIT 1
-$$ LANGUAGE SQL;
+-- policy for changing the tier of a team based on the user's role in the team
+CREATE OR REPLACE FUNCTION is_team_administrator(user_id INT, team_id INT) RETURNS BOOLEAN AS $$
+DECLARE
+    is_admin BOOLEAN;
+BEGIN
+    SELECT EXISTS (
+        SELECT 1
+        FROM team_users tu
+        WHERE tu.user_id = is_administrator.user_id
+          AND tu.team_id = is_administrator.team_id
+          AND 'SystemAdministrator' = ANY(tu.roles)
+    ) INTO is_admin;
 
-COMMENT ON FUNCTION get_tier IS 
-    'The license tier of the user.';
+    RETURN is_admin;
+END;
+$$ LANGUAGE plpgsql;
 
--- policies
-CREATE POLICY select_models ON models FOR SELECT USING (tier <= get_tier());
+CREATE POLICY tier_change_policy
+    ON team_licenses
+    FOR UPDATE
+    USING (is_team_administrator(current_app_user(), team_id));
+
+-- policy for model access based on highest tier of team
+CREATE OR REPLACE FUNCTION get_highest_team_tier(user_id INT) RETURNS INTEGER AS $$
+DECLARE
+    highest_tier INTEGER;
+BEGIN
+    SELECT COALESCE(MAX(l.tier), 0)
+    INTO highest_tier
+    FROM team_users tu
+    JOIN team_licenses l ON tu.team_id = l.team_id
+    WHERE tu.user_id = get_highest_team_tier.user_id;
+
+    RETURN highest_tier;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE POLICY select_models ON models FOR SELECT USING (tier <= get_highest_team_tier(current_app_user()));
+
 
 -- create a function to create a license for a user
 create or replace function create_license()
 returns trigger as $$
 begin
-    insert into licenses (user_id, tier, expires_at) values (new.id, 0, current_timestamp + interval '1 month');
+    insert into team_licenses (team_id, tier, expires_at) values (new.id, 0, current_timestamp + interval '1 month');
     return new;
 end;
 
@@ -39,18 +61,26 @@ $$ language plpgsql;
 
 -- create a trigger to create a license for a user when they sign up
 create or replace trigger create_license
-    after insert on users
+    after insert on teams
     for each row
     execute procedure create_license();
 
 
-GRANT SELECT, UPDATE, INSERT ON licenses TO bionic_application; 
+GRANT SELECT, UPDATE, INSERT ON team_licenses TO bionic_application; 
 
 -- Give access to the readonly user
-GRANT SELECT ON licenses TO bionic_readonly;
+GRANT SELECT ON team_licenses TO bionic_readonly;
 
 
 alter table models enable row level security;
 
 -- migrate:down
-DROP TABLE licenses;
+DROP TABLE team_licenses;
+DROP FUNCTION is_team_administrator;
+DROP POLICY tier_change_policy ON team_licenses;
+DROP FUNCTION get_highest_team_tier;
+DROP POLICY select_models ON models;
+DROP FUNCTION create_license;
+DROP TRIGGER create_license ON teams;
+
+alter table models disable row level security;

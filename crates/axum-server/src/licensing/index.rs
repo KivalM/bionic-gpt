@@ -15,8 +15,6 @@ pub async fn index(
     let mut client = pool.get().await?;
     let transaction = client.transaction().await?;
 
-    let user_id =
-        authz::set_row_level_security_user_id(&transaction, current_user.sub.clone()).await?;
 
     let rbac = authz::get_permissions(&transaction, &current_user.into(), team_id).await?;
 
@@ -25,7 +23,7 @@ pub async fn index(
     }
 
     let licenses = queries::licenses::license()
-        .bind(&transaction, &user_id)
+        .bind(&transaction, &team_id)
         .all()
         .await?;
 

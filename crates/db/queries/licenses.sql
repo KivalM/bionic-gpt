@@ -2,15 +2,15 @@
 SELECT 
     id, tier
 FROM 
-    licenses
+    team_licenses
 WHERE
-    user_id = :user_id;
+    team_id = :team_id;
 
 --! set_license_tier
 UPDATE
-    licenses
+    team_licenses
 SET 
     tier = :tier
 WHERE
-    user_id = :user_id;
+    team_id = :team_id;
 
