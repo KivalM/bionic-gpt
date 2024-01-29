@@ -60,9 +60,9 @@ pub fn AppLayout<'a>(cx: Scope<'a, AppLayoutProps<'a>>) -> Element {
                 id: "nav-toggle"
             }
             div {
-                class: "l_layout",
+                class: "l_layout ",
                 nav {
-                    class: "l_navigation",
+                    class: "l_navigation bg-[#653d2e]",
                     label {
                         id: "collapse-button",
                         "for": "nav-toggle",

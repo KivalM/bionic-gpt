@@ -11,16 +11,21 @@
 
 [data-theme="dark"] {
     --main-bg-color: #333;
-    --bg-color-surface: 3333;
+    --bg-color-surface: #9f5031;
     --default-border-color: #606c79;
 
-    .l_nav_items > .menu {
-        > li > a > img {
+    .l_navigation {
+        background-color: #9f5031;
+    }
+
+
+    .l_nav_items>.menu {
+        >li>a>img {
             filter: invert(0.6);
         }
     }
 
-    .dropdown > label > img {
+    .dropdown>label>img {
         filter: invert(0.6);
     }
 }
@@ -30,8 +35,8 @@
     .btn-primary {
         color: white;
     }
-    
-    table > thead {
+
+    table>thead {
         background-color: #fafbfb;
     }
 }
@@ -41,22 +46,23 @@ a {
 }
 
 /** In the chat the first p has margin, we need to remove it **/
-response-formatter > p:first-child, streaming-chat > p:first-child {
+response-formatter>p:first-child,
+streaming-chat>p:first-child {
     margin-top: 0;
 }
 
-.l_nav_items > .menu {
+.l_nav_items>.menu {
     border: 0;
     margin: 0;
     padding-bottom: 0;
     padding-top: 0;
-    
+
     /** Invert the svg images, this is the way to handle dark mode **/
-    > li > a.active > img {
+    >li>a.active>img {
         filter: invert(1);
     }
 
-    > li > a {
+    >li>a {
         text-decoration: none;
     }
 }
@@ -65,11 +71,12 @@ response-formatter > p:first-child, streaming-chat > p:first-child {
 .card {
     border: 1px solid var(--default-border-color);
     background-color: var(--bg-color-surface);
+
     .card-header {
         border-bottom: 1px solid var(--default-border-color);
         padding: 1rem;
 
-        > .card-title {
+        >.card-title {
             font-size: 0.875rem;
         }
     }
@@ -78,12 +85,13 @@ response-formatter > p:first-child, streaming-chat > p:first-child {
         .card-header {
             padding-left: 0.75rem;
         }
+
         .card-body {
             padding: 0;
-    
-            > .table {
-    
-                > tbody > tr:last-child {
+
+            >.table {
+
+                >tbody>tr:last-child {
                     border-bottom-width: 0px;
                 }
             }
@@ -107,10 +115,10 @@ response-formatter > p:first-child, streaming-chat > p:first-child {
     }
 }
 
-.menu li > *:not(ul):not(.menu-title):not(details):active, 
-.menu li > *:not(ul):not(.menu-title):not(details).active, 
-.menu li > details > summary:active {
-    background-color: #3559c7;
+.menu li>*:not(ul):not(.menu-title):not(details):active,
+.menu li>*:not(ul):not(.menu-title):not(details).active,
+.menu li>details>summary:active {
+    background-color: #da6334;
     color: white;
 }
 
@@ -131,30 +139,35 @@ response-formatter > p:first-child, streaming-chat > p:first-child {
     color: rgb(178, 48, 21);
     border-color: rgb(250, 199, 190);
 }
-.label-info{
+
+.label-info {
     background-color: rgb(240, 244, 255);
     color: rgb(52, 81, 178);
     border-color: rgb(198, 212, 249);
 }
+
 .label-neutral {
     background-color: rgb(241, 243, 245);
     color: rgb(85, 89, 83);
-    border-color: rgb(216,220,224);
+    border-color: rgb(216, 220, 224);
 }
+
 .label-warning {
     background-color: rgb(255, 250, 225);
     color: rgb(148, 105, 0);
     border-color: rgb(248, 216, 124);
 }
+
 .label-success {
     background-color: rgb(235, 249, 235);
     color: rgb(17, 118, 39);
     border-color: rgb(183, 223, 186);
 }
+
 .label-highlight {
     background-color: rgb(249, 241, 254);
     color: rgb(121, 58, 175);
-    border-color: rgb(227,204,244);
+    border-color: rgb(227, 204, 244);
 }
 
 /** Alerts **/
@@ -167,30 +180,35 @@ response-formatter > p:first-child, streaming-chat > p:first-child {
     color: rgb(178, 48, 21);
     border-color: rgb(250, 199, 190);
 }
-.alert-info{
+
+.alert-info {
     background-color: rgb(240, 244, 255);
     color: rgb(52, 81, 178);
     border-color: rgb(198, 212, 249);
 }
+
 .alert-neutral {
     background-color: rgb(241, 243, 245);
     color: rgb(85, 89, 83);
-    border-color: rgb(216,220,224);
+    border-color: rgb(216, 220, 224);
 }
+
 .alert-warning {
     background-color: rgb(255, 250, 225);
     color: rgb(148, 105, 0);
     border-color: rgb(248, 216, 124);
 }
+
 .alert-success {
     background-color: rgb(235, 249, 235);
     color: rgb(17, 118, 39);
     border-color: rgb(183, 223, 186);
 }
+
 .alert-highlight {
     background-color: rgb(249, 241, 254);
     color: rgb(121, 58, 175);
-    border-color: rgb(227,204,244);
+    border-color: rgb(227, 204, 244);
 }
 
 /** Drop down menu **/

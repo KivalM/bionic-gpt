@@ -2,7 +2,7 @@
 use super::super::routes;
 use crate::app_layout::{Layout, SideBar};
 use assets::files::delete_svg;
-use assets::files::{commit_svg, handshake_svg, profile_svg, spinner_svg};
+use assets::files::{handshake_svg, profile_svg, spinner_svg};
 use daisy_rsx::*;
 use db::authz::Rbac;
 use db::queries::{chats::Chat, conversations::History, prompts::Prompt};
@@ -69,29 +69,37 @@ pub fn Page(
                 id: "console-panel",
                 class: "h-full",
                 div {
-                    class: "flex flex-col-reverse h-[calc(100%-100px)] overflow-y-auto",
+                    class: "flex flex-col h-[calc(100%-100px)] overflow-y-auto",
                     id: "console-stream",
                     div {
-                        class: "flex flex-col-reverse min-w-[65ch] max-w-prose m-auto h-full",
-                        chats.iter().rev().map(|chat| {
+                        class: "flex flex-col min-w-[65ch] max-w-prose m-auto h-full",
+                        chats.iter().map(|chat| {
                             cx.render(rsx!(
-                                super::prompt_drawer::PromptDrawer {
-                                    trigger_id: format!("show-prompt-{}", chat.id),
-                                    prompt: chat.prompt.clone()
+                                Chatbox{
+                                    image_src: profile_svg.name,
+                                    name: "You",
+                                    text: "{chat.user_request}"
+                                },
+                                if chat.response.is_none() {
+                                    cx.render(rsx!(
+                                        Label {
+                                            class: "ml-2",
+                                            label_role: LabelRole::Highlight,
+                                            a {
+                                                id: "stop-processing",
+                                                "Stop Processing"
+                                            }
+                                        }
+                                    ))
                                 }
-                                TimeLine {
                                     if let Some(response) = &chat.response {
                                         // We are generating text
                                         cx.render(rsx!(
-                                            TimeLineBadge {
-                                                image_src: handshake_svg.name
-                                            }
-                                            TimeLineBody {
-                                                class: "prose",
-                                                response-formatter {
-                                                    response: "{convert_quotes(response)}"
-                                                }
-                                            }
+                                            Chatbox{
+                                                image_src: handshake_svg.name,
+                                                name: "{chat.model_name}",
+                                                text: "{convert_quotes(response)}"
+                                            },
                                         ))
                                     } else {
                                         // The generated text
@@ -126,54 +134,6 @@ pub fn Page(
                                             }
                                         ))
                                     }
-                                }
-                                TimeLine {
-                                    class: "TimelineItem--condensed",
-                                    TimeLineBadge {
-                                        image_src: commit_svg.name
-                                    }
-                                    TimeLineBody {
-                                        Label {
-                                            "Model: "
-                                            strong {
-                                                " {chat.model_name}"
-                                            }
-                                        }
-
-                                        if chat.response.is_none() {
-                                            cx.render(rsx!(
-                                                Label {
-                                                    class: "ml-2",
-                                                    label_role: LabelRole::Highlight,
-                                                    a {
-                                                        id: "stop-processing",
-                                                        "Stop Processing"
-                                                    }
-                                                }
-                                            ))
-                                        } else {
-                                            cx.render(rsx!(
-                                                Label {
-                                                    class: "ml-2",
-                                                    a {
-                                                        "data-drawer-target": "show-prompt-{chat.id}",
-                                                        "View Prompt"
-                                                    }
-                                                }
-                                            ))
-                                        }
-                                    }
-                                }
-                                TimeLine {
-                                    TimeLineBadge {
-                                        image_src: profile_svg.name
-                                    }
-                                    TimeLineBody {
-                                        span {
-                                            "{chat.user_request} "
-                                        }
-                                    }
-                                }
                             ))
                         })
                     }
