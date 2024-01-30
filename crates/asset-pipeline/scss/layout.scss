@@ -26,7 +26,7 @@
         }
 
         // Set this so then our footer with absolute will be relative.
-        position: relative; 
+        position: relative;
         display: none;
         grid-area: sidenav;
         height: 100vh;
@@ -36,12 +36,12 @@
         flex-direction: column;
 
         >.l_nav_header {
-            height: 72px;
+            height: 128px;
             flex-shrink: 0;
             padding: 1rem;
             border-bottom: 1px solid var(--default-border-color);
 
-            details > div {
+            details>div {
                 z-index: 112;
             }
         }
@@ -49,7 +49,7 @@
         >.l_footer {
             padding: 1rem;
 
-            details > div {
+            details>div {
                 z-index: 112;
                 position: absolute;
                 bottom: 60px;
@@ -61,11 +61,11 @@
             flex-grow: 4;
             padding-top: 1rem;
 
-            .menu:first-of-type > li:first-of-type {
+            .menu:first-of-type>li:first-of-type {
                 padding-top: 0;
             }
 
-            > .heading {
+            >.heading {
                 min-inline-size: 100%;
                 white-space: nowrap;
                 overflow: hidden;
@@ -80,7 +80,7 @@
         height: 100vh;
         background-color: var(--main-bg-color);
 
-        > header {
+        >header {
             display: flex;
             align-items: center;
             height: 72px;
@@ -89,25 +89,25 @@
             box-shadow: var(--header-box-shadow);
             background-color: var(--bg-color-surface);
 
-            > div {
+            >div {
                 width: 100%;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
             }
 
-            > h3 {
+            >h3 {
                 font-size: 1rem;
                 font-weight: 600;
             }
         }
 
-        > section {
+        >section {
             padding: 1rem;
             min-height: calc(100% - 72px);
         }
 
-        > section.console {
+        >section.console {
             padding: 0;
         }
     }
@@ -133,14 +133,14 @@
 @include for-tablet-landscape-up {
     #nav-toggle:checked {
 
-        ~ .l_layout {
+        ~.l_layout {
             .hamburger {
                 margin-right: 1rem;
                 cursor: pointer;
                 display: block;
                 z-index: 2000;
 
-                > div {
+                >div {
                     position: relative;
                     color: #333;
                     width: 1.5rem;
@@ -152,12 +152,14 @@
                     transition: all 0.3s ease-in-out;
                 }
             }
-        
+
             display: flex;
             width: 100vw;
+
             >.l_navigation {
                 display: none;
             }
+
             >.l_content {
                 width: 100vw;
             }

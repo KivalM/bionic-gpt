@@ -36,9 +36,9 @@ pub fn Page(cx: Scope, teams: Vec<(String, String)>, team: Team) -> Element {
                 id: "teams-popup",
                 class: "w-full",
                 div {
-                    class: "flex justify-center height-full w-full items-center",
+                    class: "flex justify-center height-full w-full items-center text-white",
                     h4 {
-                        "BionicGPT"
+                        ""
                     }
                 }
             }

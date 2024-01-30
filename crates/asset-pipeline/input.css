@@ -10,12 +10,16 @@
 }
 
 [data-theme="dark"] {
-    --main-bg-color: #333;
+    --main-bg-color: #da6334;
     --bg-color-surface: #9f5031;
-    --default-border-color: #606c79;
+    --default-border-color: #653d2e;
 
     .l_navigation {
         background-color: #9f5031;
+    }
+
+    .btn-primary {
+        color: white;
     }
 
 
@@ -34,6 +38,8 @@
 [data-theme="light"] {
     .btn-primary {
         color: white;
+
+
     }
 
     table>thead {

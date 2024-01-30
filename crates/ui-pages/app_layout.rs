@@ -180,18 +180,18 @@ pub fn Layout<'a>(cx: Scope<'a, LayoutProps<'a>>) -> Element {
             )),
             sidebar_header: cx.render(rsx!(
                 div{
-                    class: "flex flex-col items-center justify-center w-full h-16 text-gray-700 text-center",
-                    div{
-                        class: "flex flex-row items-center justify-start w-full text-white text-center",
-                        "LLMKit" 
-                    },
+                    class: "flex flex-col items-center justify-center w-full h-32 text-gray-700 text-center",
+
                     turbo-frame {
                         id: "teams-popup",
                         class: "min-w-full",
                         src: "{super::routes::team::teams_popup_route(cx.props.team_id)}"
+                    },
+                    img{
+                        class: "w-full ",
+                        src: llmkit_white_png.name
                     }
                 }
-
             )),
             sidebar_footer: cx.render(rsx!(
                 ProfilePopup {
