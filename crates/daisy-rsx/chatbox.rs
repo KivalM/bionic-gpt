@@ -19,13 +19,10 @@ pub fn Chatbox<'a>(cx: Scope<'a, ChatboxProps<'a>>) -> Element {
     //                 .get_element_by_id("copy-response")
     //                 .unwrap()
     //                 .text_content().unwrap_or_default();
-
     //             let window = web_sys::window().unwrap();
     //             let _ = window.navigator().clipboard().unwrap().write_text(&clipboard_content);
-
     // };
 
-    // tailwindcss
     cx.render(rsx!(
         div {
             class: "px-4 py-2 justify-center text-base md:gap-6 m-auto w-full max-w-2xl text-gray-700",
