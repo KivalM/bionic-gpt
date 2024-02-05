@@ -2,7 +2,7 @@
 create table team_licenses (
     id integer primary key not null generated always as identity,
     team_id integer unique not null references teams(id),
-    tier integer not null default 0,
+    tier integer not null default 1 references tiers(id),
 
     expires_at TIMESTAMPTZ not null default current_timestamp + interval '1 month',
     created_at TIMESTAMPTZ not null default current_timestamp,
@@ -53,7 +53,7 @@ CREATE POLICY select_models ON models FOR SELECT USING (tier <= get_highest_team
 create or replace function create_license()
 returns trigger as $$
 begin
-    insert into team_licenses (team_id, tier, expires_at) values (new.id, 0, current_timestamp + interval '1 month');
+    insert into team_licenses (team_id, tier, expires_at) values (new.id, 1, current_timestamp + interval '1 month');
     return new;
 end;
 

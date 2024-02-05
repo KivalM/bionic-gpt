@@ -3,6 +3,7 @@ use crate::app_layout::{Layout, SideBar};
 use assets::files::button_plus_svg;
 use daisy_rsx::*;
 use db::authz::Rbac;
+use db::queries::tiers::Tier;
 use db::{Invitation, Member, Team, User};
 use dioxus::prelude::*;
 
@@ -12,6 +13,7 @@ pub fn Page(
     rbac: Rbac,
     members: Vec<Member>,
     invites: Vec<Invitation>,
+    tier: Tier,
     team: Team,
     user: User,
     can_manage_team: bool,
@@ -88,8 +90,14 @@ pub fn Page(
                         drawer_trigger: "set-name-drawer",
                         button_size: ButtonSize::Small,
                         "Edit Name"
+                    },
+                    div{
+                        class: "text-sm text-gray-500 ml-2 block",
+                        "Members: {members.len()}/{tier.team_limit}",
+                        " Invites: 0/5"
                     }
                 }
+
                 BoxBody {
                     table {
                         class: "table table-sm",

@@ -33,7 +33,8 @@
 		"EMAIL": "${localEnv:EMAIL}",
 		"NAME": "${localEnv:NAME}",
 		// Pass in the host directory for Docker mount commands from inside the container
-		"HOST_PROJECT_PATH": "${localWorkspaceFolder}"
+		"HOST_PROJECT_PATH": "${localWorkspaceFolder}",
+		"RUSTFLAGS": "--cfg=web_sys_unstable_apis"
 	},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [5432],

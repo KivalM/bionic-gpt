@@ -54,11 +54,17 @@ pub async fn index(
         "Team : No Name ".to_string()
     };
 
+    let tier = queries::tiers::get_tier()
+        .bind(&transaction, &team_id)
+        .one()
+        .await?;
+
     Ok(Html(ui_pages::team_members::members::members(
         ui_pages::team_members::members::PageProps {
             invites,
             rbac,
             members,
+            tier,
             team,
             user,
             team_name,

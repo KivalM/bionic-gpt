@@ -8,9 +8,9 @@ use dioxus::prelude::*;
 #[inline_props]
 pub fn Page(cx: Scope, rbac: Rbac, team_id: i32, license: License) -> Element {
     let tiers = [
-        (0, "Free", "This is a Free description"),
-        (1, "Basic", "This is a Basic description"),
-        (2, "Enterprise", "This is a Enterprise description"),
+        (1, "Free", "This is a Free description"),
+        (2, "Basic", "This is a Basic description"),
+        (3, "Enterprise", "This is a Enterprise description"),
     ];
 
     cx.render(rsx! {

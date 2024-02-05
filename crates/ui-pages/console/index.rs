@@ -72,47 +72,44 @@ pub fn Page(
                     class: "flex flex-col h-[calc(100%-100px)] overflow-y-auto",
                     id: "console-stream",
                     div {
-                        class: "flex flex-col min-w-[65ch] max-w-prose m-auto h-full",
+                        class: "flex flex-col min-w-[65ch] max-w-prose mx-auto prose",
                         chats.iter().map(|chat| {
                             cx.render(rsx!(
                                 Chatbox{
                                     image_src: profile_svg.name,
                                     name: "You",
-                                    text: "{chat.user_request}"
+                                    text: cx.render(rsx!("{chat.user_request}")),
+                                    allow_copy: &chat.user_request,
                                 },
-                                if chat.response.is_none() {
-                                    cx.render(rsx!(
-                                        Label {
-                                            class: "ml-2",
-                                            label_role: LabelRole::Highlight,
-                                            a {
-                                                id: "stop-processing",
-                                                "Stop Processing"
-                                            }
-                                        }
-                                    ))
-                                }
                                     if let Some(response) = &chat.response {
                                         // We are generating text
                                         cx.render(rsx!(
                                             Chatbox{
                                                 image_src: handshake_svg.name,
                                                 name: "{chat.model_name}",
-                                                text: "{convert_quotes(response)}"
+                                                text: cx.render(rsx!{convert_quotes(response)}),
+                                                allow_copy: &convert_quotes(response)
                                             },
                                         ))
                                     } else {
                                         // The generated text
                                         cx.render(rsx!(
-                                            TimeLineBadge {
-                                                image_src: spinner_svg.name
-                                            }
-                                            TimeLineBody {
-                                                class: "prose",
+                                            Chatbox {
+                                                image_src: spinner_svg.name,
+                                                name: "{chat.model_name}",
+                                                text: cx.render(rsx!{
                                                 streaming-chat {
                                                     prompt: "{chat.prompt}",
-                                                    "chat-id": "{chat.id}",
-                                                    span {
+                                                    "chat-id": "{chat.id}",               
+                                                Label {
+                                                    class: "ml-2",
+                                                    label_role: LabelRole::Highlight,
+                                                    a {
+                                                        id: "stop-processing",
+                                                        "Stop Processing"
+                                                    }
+                                                },
+                                                span {
                                                         "Processing prompt"
                                                     }
                                                 }
@@ -130,7 +127,7 @@ pub fn Page(
                                                         value: "{chat.id}",
                                                         "type": "hidden"
                                                     }
-                                                }
+                                                }})
                                             }
                                         ))
                                     }

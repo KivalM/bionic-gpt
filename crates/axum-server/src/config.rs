@@ -56,6 +56,8 @@ pub struct Config {
     pub app_database_url: String,
     // Configure SMTP for email.
     pub smtp_config: Option<SmtpConfig>,
+    // The license server
+    pub license_server: String,
 }
 
 impl Config {
@@ -82,6 +84,7 @@ impl Config {
             port,
             app_database_url,
             smtp_config: SmtpConfig::new(),
+            license_server: env::var("LICENSE_SERVER").unwrap_or("http://license:8000".to_string()),
         }
     }
 }

@@ -189,6 +189,9 @@ services:
   # MailHog is an email testing tool for developers.
   smtp:
     image: mailhog/mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
 
 volumes:
   target:
