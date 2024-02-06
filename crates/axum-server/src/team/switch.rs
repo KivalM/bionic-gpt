@@ -16,6 +16,7 @@ pub async fn switch(
     // Create a transaction and setup RLS
     let mut client = pool.get().await?;
     let transaction = client.transaction().await?;
+    let email = current_user.email.clone();
     let rbac = authz::get_permissions(&transaction, &current_user.into(), team_id).await?;
 
     let team = queries::teams::team()
@@ -28,5 +29,18 @@ pub async fn switch(
         .all()
         .await?;
 
-    Ok(Html(ui_pages::teams::teams(teams, team.id, rbac)))
+    let invites_meta =
+        queries::invitations::get_invitations_by_email_with_invite_name_and_team_name()
+            .bind(&transaction, &email)
+            .all()
+            .await?;
+
+    println!("{:?}", invites_meta);
+
+    Ok(Html(ui_pages::teams::teams(
+        teams,
+        invites_meta,
+        team.id,
+        rbac,
+    )))
 }

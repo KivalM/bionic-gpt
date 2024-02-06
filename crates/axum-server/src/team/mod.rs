@@ -22,6 +22,10 @@ pub fn routes() -> Router {
             get(accept_invite::invite),
         )
         .route(
+            "/app/invite/:invite_selector/:invite_validator/reject",
+            get(accept_invite::reject_invite),
+        )
+        .route(
             "/app/team/:team_id/create_invite",
             post(create_invite::create_invite),
         )

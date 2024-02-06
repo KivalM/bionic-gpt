@@ -11,6 +11,7 @@ pub enum CustomError {
     ExternalApi(String),
     Authentication(String),
     Authorization,
+    TeamFull,
 }
 
 // Allow the use of "{}" format specifier
@@ -24,6 +25,7 @@ impl fmt::Display for CustomError {
             CustomError::Database(ref cause) => {
                 write!(f, "Database Error: {}", cause)
             }
+            CustomError::TeamFull => write!(f, "Team is full"),
         }
     }
 }
@@ -37,6 +39,7 @@ impl IntoResponse for CustomError {
             CustomError::ExternalApi(message) => (StatusCode::UNPROCESSABLE_ENTITY, message),
             CustomError::Authentication(message) => (StatusCode::UNAUTHORIZED, message),
             CustomError::Authorization => (StatusCode::UNAUTHORIZED, "Unauthorized".to_string()),
+            CustomError::TeamFull => (StatusCode::UNPROCESSABLE_ENTITY, "Team is full".to_string()),
         };
 
         let response = format!("status = {}, message = {}", status, error_message);

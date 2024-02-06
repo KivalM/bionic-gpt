@@ -3,6 +3,7 @@ use crate::app_layout::{Layout, SideBar};
 use assets::files::button_plus_svg;
 use daisy_rsx::*;
 use db::authz::Rbac;
+use db::queries::invitations::InvitationWithMeta;
 use db::TeamOwner;
 use dioxus::prelude::*;
 
@@ -12,6 +13,7 @@ pub fn Page(
     rbac: Rbac,
     team_id: i32,
     teams: Vec<TeamOwner>,
+    invites: Vec<InvitationWithMeta>,
     submit_action: String,
 ) -> Element {
     cx.render(rsx! {
@@ -147,11 +149,91 @@ pub fn Page(
                     }
                 }
             }
+
+
+
+            // invitations section
+            Box {
+                class: "has-data-table",
+                BoxHeader {
+                    title: "Invitations"
+                }
+                BoxBody {
+                    table {
+                        class: "table table-sm",
+                        thead {
+                            th { "Team" }
+                            th { "From" }
+                            th { "Role" }
+                            th {
+                                class: "text-right", 
+                                "Accept/Reject" 
+                            }
+
+                        }
+                        tbody {
+                            invites.iter().map(|invite| rsx!(
+                                cx.render(rsx! {
+                                    tr {
+                                        td {
+                                            Avatar {
+                                                name: "{invite.team_name}",
+                                                avatar_type: avatar::AvatarType::Team
+                                            }
+                                            span {
+                                                class: "ml-2 mr-2",
+                                                "{invite.team_name}"
+                                            }
+                                        }
+                                        td {
+                                            strong {
+                                                "{invite.team_owner}"
+                                            }
+                                        }
+                                        td {
+                                            invite.roles.iter().map(|role| rsx! {
+                                                span {
+                                                    class: "mr-2",
+                                                    match role {
+                                                        db::types::public::Role::TeamManager => "Manager",
+                                                        db::types::public::Role::Collaborator => "Collaborator",
+                                                        db::types::public::Role::SystemAdministrator => "Admin",
+                                                    }
+                                                }
+                                            })
+                                        }
+                                        td{
+                                            class: "text-right",
+                                            a {
+                                                "data-turbo-frame": "_top",
+                                                href: "/app/invite/{invite.invitation_selector}/{invite.invitation_verifier_hash}",
+                                                "Accept"
+                                            }
+                                            " / "
+                                            a {
+                                                "data-turbo-frame": "_top",
+                                                href: "/app/invite/{invite.invitation_selector}/{invite.invitation_verifier_hash}/reject",
+                                                "Reject"
+                                            }
+
+                                        }
+                                    }
+                                })
+                            ))
+                        }
+                    }
+                }
+            }
         }
     })
 }
 
-pub fn teams(teams: Vec<TeamOwner>, team_id: i32, rbac: Rbac) -> String {
+pub fn teams(
+    teams: Vec<TeamOwner>,
+    invites: Vec<InvitationWithMeta>,
+    team_id: i32,
+    rbac: Rbac,
+) -> String {
     let submit_action = crate::routes::team::new_team_route(team_id);
 
     crate::render(VirtualDom::new_with_props(
@@ -159,6 +241,7 @@ pub fn teams(teams: Vec<TeamOwner>, team_id: i32, rbac: Rbac) -> String {
         PageProps {
             team_id,
             rbac,
+            invites,
             teams,
             submit_action,
         },

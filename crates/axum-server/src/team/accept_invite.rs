@@ -32,12 +32,29 @@ pub async fn invite(
     Ok(Redirect::to(&ui_pages::routes::team::switch_route(team_id)))
 }
 
+pub async fn reject_invite(
+    Path(invite): Path<Invite>,
+    Extension(pool): Extension<Pool>,
+    current_user: Authentication,
+) -> Result<impl IntoResponse, CustomError> {
+    reject_invitation(
+        &pool,
+        current_user,
+        &invite.invite_selector,
+        &invite.invite_validator,
+    )
+    .await?;
+
+    Ok(Redirect::to("/app/teams_popup"))
+}
+
 pub async fn accept_invitation(
     pool: &Pool,
     current_user: Authentication,
     invitation_selector: &str,
     invitation_verifier: &str,
 ) -> Result<i32, CustomError> {
+    let original_verifier = invitation_verifier;
     let invitation_verifier = base64::decode_config(invitation_verifier, base64::URL_SAFE_NO_PAD)
         .map_err(|e| CustomError::FaultySetup(e.to_string()))?;
     let invitation_verifier_hash = Sha256::digest(&invitation_verifier);
@@ -54,7 +71,29 @@ pub async fn accept_invitation(
         .one()
         .await?;
 
-    if invitation.invitation_verifier_hash == invitation_verifier_hash_base64 {
+    // get the team information
+    let team_license = queries::licenses::license()
+        .bind(&transaction, &invitation.team_id)
+        .one()
+        .await?;
+
+    let tier = queries::tiers::get_tier()
+        .bind(&transaction, &team_license.tier)
+        .one()
+        .await?;
+
+    let team_users = queries::teams::get_users()
+        .bind(&transaction, &invitation.team_id)
+        .all()
+        .await?;
+
+    if team_users.len() >= tier.team_limit as usize {
+        return Err(CustomError::TeamFull);
+    }
+
+    if invitation.invitation_verifier_hash == invitation_verifier_hash_base64
+        || original_verifier == invitation.invitation_verifier_hash
+    {
         let user = queries::users::user()
             .bind(&transaction, &user_id)
             .one()
@@ -97,4 +136,48 @@ pub async fn accept_invitation(
     transaction.commit().await?;
 
     Ok(invitation.team_id)
+}
+
+pub async fn reject_invitation(
+    pool: &Pool,
+    current_user: Authentication,
+    invitation_selector: &str,
+    invitation_verifier: &str,
+) -> Result<(), CustomError> {
+    let original_verifier = invitation_verifier;
+    let invitation_verifier = base64::decode_config(invitation_verifier, base64::URL_SAFE_NO_PAD)
+        .map_err(|e| CustomError::FaultySetup(e.to_string()))?;
+    let invitation_verifier_hash = Sha256::digest(&invitation_verifier);
+    let invitation_verifier_hash_base64 =
+        base64::encode_config(invitation_verifier_hash, base64::URL_SAFE_NO_PAD);
+
+    // Create a transaction and setup RLS
+    let mut client = pool.get().await?;
+    let transaction = client.transaction().await?;
+    let user_id = authz::set_row_level_security_user_id(&transaction, current_user.sub).await?;
+
+    let invitation = queries::invitations::get_invitation()
+        .bind(&transaction, &invitation_selector)
+        .one()
+        .await?;
+
+    if invitation.invitation_verifier_hash == invitation_verifier_hash_base64
+        || original_verifier == invitation.invitation_verifier_hash
+    {
+        let user = queries::users::user()
+            .bind(&transaction, &user_id)
+            .one()
+            .await?;
+
+        // Make sure the user accepting the invitation is the user that we emailed
+        if user.email == invitation.email {
+            queries::invitations::delete_invitation()
+                .bind(&transaction, &invitation.email, &invitation.team_id)
+                .await?;
+        }
+    }
+
+    transaction.commit().await?;
+
+    Ok(())
 }

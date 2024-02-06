@@ -65,7 +65,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE POLICY select_models ON models FOR SELECT USING (is_app_user_sys_admin() or tier <= get_highest_team_tier(current_app_user()));
-
+create policy insert_models on models for insert with check (is_app_user_sys_admin());
 
 -- create a function to create a license for a user
 create or replace function create_license()
