@@ -14,7 +14,7 @@ CREATE TABLE models (
     api_key VARCHAR, 
     billion_parameters INT NOT NULL, 
     context_size INT NOT NULL, 
-    tier INT NOT NULL DEFAULT 0,
+    tier INT NOT NULL DEFAULT 1,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

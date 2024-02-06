@@ -19,7 +19,7 @@ BEGIN
         FROM team_users tu
         WHERE tu.user_id = is_administrator.user_id
           AND tu.team_id = is_administrator.team_id
-          AND 'SystemAdministrator' = ANY(tu.roles)
+          AND 'TeamManager' = ANY(tu.roles)
     ) INTO is_admin;
 
     RETURN is_admin;
@@ -34,8 +34,26 @@ CREATE POLICY tier_change_policy
 -- policy for model access based on highest tier of team
 CREATE OR REPLACE FUNCTION get_highest_team_tier(user_id INT) RETURNS INTEGER AS $$
 DECLARE
+    is_admin BOOLEAN;
     highest_tier INTEGER;
 BEGIN
+    IF current_app_user() IS NULL THEN
+        RETURN 0;
+    END IF;
+
+    -- if the user is admin set the tier to 100
+ 
+    SELECT system_admin
+        FROM users u  
+    WHERE u.id = get_highest_team_tier.user_id
+        AND u.system_admin = true  
+    INTO is_admin;
+
+    IF is_admin THEN
+        RETURN 100;
+    END IF;
+
+
     SELECT COALESCE(MAX(l.tier), 0)
     INTO highest_tier
     FROM team_users tu
@@ -46,7 +64,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE POLICY select_models ON models FOR SELECT USING (tier <= get_highest_team_tier(current_app_user()));
+CREATE POLICY select_models ON models FOR SELECT USING (is_app_user_sys_admin() or tier <= get_highest_team_tier(current_app_user()));
 
 
 -- create a function to create a license for a user

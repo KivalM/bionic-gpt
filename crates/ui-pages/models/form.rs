@@ -103,6 +103,29 @@ pub fn Form(
                             value: "{context_size_bytes}",
                             required: true
                         }
+
+                        Select {
+                            name: "tier",
+                            label: "The availability tier of the model",
+                            label_class: "mt-4",
+                            help_text: "Some models are only available to certain tiers",
+                            value: &model_type,
+                            SelectOption {
+                                value: "1",
+                                selected_value: &model_type,
+                                "Free"
+                            }
+                            SelectOption {
+                                value: "2",
+                                selected_value: &model_type,
+                                "Basic"
+                            }
+                            SelectOption {
+                                value: "3",
+                                selected_value: &model_type,
+                                "Enterprise"
+                            }
+                        }
                     }
                 }
 

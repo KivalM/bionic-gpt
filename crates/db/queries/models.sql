@@ -9,6 +9,7 @@ SELECT
     api_key,
     billion_parameters,
     context_size,
+    tier,
     created_at,
     updated_at
 FROM 
@@ -25,6 +26,7 @@ SELECT
     api_key,
     billion_parameters,
     context_size,
+    tier,
     created_at,
     updated_at
 FROM 
@@ -44,6 +46,7 @@ SELECT
     api_key,
     billion_parameters,
     context_size,
+    tier,
     created_at,
     updated_at
 FROM 
@@ -61,6 +64,7 @@ SELECT
     api_key,
     billion_parameters,
     context_size,
+    tier,
     created_at,
     updated_at
 FROM 
@@ -79,7 +83,8 @@ INSERT INTO models (
     base_url,
     api_key,
     billion_parameters,
-    context_size
+    context_size,
+    tier
 )
 VALUES(
     :name, 
@@ -87,7 +92,8 @@ VALUES(
     :base_url, 
     :api_key, 
     :billion_parameters, 
-    :context_size
+    :context_size,
+    :tier
 )
 RETURNING id;
 
@@ -100,7 +106,8 @@ SET
     base_url = :base_url,
     api_key = :api_key,
     billion_parameters = :billion_parameters,
-    context_size = :context_size
+    context_size = :context_size,
+    tier = :tier
 WHERE
     id = :id;
 

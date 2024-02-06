@@ -22,6 +22,7 @@ pub struct ModelForm {
     pub api_key: Option<String>,
     pub billion_parameters: i32,
     pub context_size: i32,
+    pub tier: i32,
 }
 
 pub async fn upsert(
@@ -41,6 +42,8 @@ pub async fn upsert(
         ModelType::Embeddings
     };
 
+    println!("{:?}", model_form);
+
     match (model_form.validate(), model_form.id) {
         (Ok(_), Some(id)) => {
             // The form is valid save to the database
@@ -53,6 +56,7 @@ pub async fn upsert(
                     &model_form.api_key,
                     &model_form.billion_parameters,
                     &model_form.context_size,
+                    &model_form.tier,
                     &id,
                 )
                 .await?;
@@ -76,6 +80,7 @@ pub async fn upsert(
                     &model_form.api_key,
                     &model_form.billion_parameters,
                     &model_form.context_size,
+                    &model_form.tier,
                 )
                 .one()
                 .await?;

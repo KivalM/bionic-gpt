@@ -20,6 +20,7 @@ pub fn ModelTable<'a>(cx: Scope, models: &'a Vec<Model>, team_id: i32) -> Elemen
                         th { "Model Type" }
                         th { "Parameters" }
                         th { "Context Length" }
+                        th { "Tier" }
                         th {
                             class: "text-right",
                             "Action"
@@ -50,6 +51,14 @@ pub fn ModelTable<'a>(cx: Scope, models: &'a Vec<Model>, team_id: i32) -> Elemen
                                     }
                                     td {
                                         "{model.context_size}"
+                                    }
+                                    td {
+                                        match model.tier {
+                                            1 => "Free",
+                                            2 => "Basic",
+                                            3 => "Enterprise",
+                                            _ => "Unknown"
+                                        }
                                     }
                                     td {
                                         class: "text-right",
