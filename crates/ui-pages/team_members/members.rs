@@ -93,8 +93,16 @@ pub fn Page(
                     },
                     div{
                         class: "text-sm text-gray-500 ml-2 block",
-                        "Members: {members.len()}/{tier.team_limit}",
-                        " Invites: 0/5"
+                        "Members: {members.len()}/",
+                        if tier.team_limit == 0{
+                            cx.render(
+                                rsx!("Unlimited")
+                            )
+                        }else{
+                            cx.render(
+                                rsx!("{tier.team_limit}")
+                            )
+                        }
                     }
                 }
 

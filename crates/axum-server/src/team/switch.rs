@@ -35,8 +35,6 @@ pub async fn switch(
             .all()
             .await?;
 
-    println!("{:?}", invites_meta);
-
     Ok(Html(ui_pages::teams::teams(
         teams,
         invites_meta,

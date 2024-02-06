@@ -87,7 +87,7 @@ pub async fn accept_invitation(
         .all()
         .await?;
 
-    if team_users.len() >= tier.team_limit as usize {
+    if team_users.len() >= tier.team_limit as usize || tier.team_limit == 0 {
         return Err(CustomError::TeamFull);
     }
 
